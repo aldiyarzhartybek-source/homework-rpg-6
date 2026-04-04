@@ -14,22 +14,30 @@ public class HealCommand implements ActionCommand {
 
     @Override
     public void execute() {
-        // TODO: Check whether the target has heal potions remaining before healing.
-        // TODO: Heal the target by healAmount using target.heal(int).
-        // TODO: Store how much was actually applied in actualHealApplied (for undo).
-        // Hint: actual heal may be less than healAmount if target is near max health.
+        actualHealApplied = 0;
+
+        if (target.getHealPotions() <= 0) {
+            return;
+        }
+
+        int missingHealth = target.getMaxHealth() - target.getHealth();
+        if (missingHealth <= 0) {
+            return;
+        }
+
+        actualHealApplied = Math.min(healAmount, missingHealth);
+        target.heal(healAmount);
     }
 
     @Override
     public void undo() {
-        // TODO: Remove the heal that was applied.
-        // Note: Use actualHealApplied (what was actually gained), not healAmount.
-        // Hint: call target.takeDamage(actualHealApplied) to reverse the heal.
+        if (actualHealApplied > 0) {
+            target.takeDamage(actualHealApplied);
+        }
     }
 
     @Override
     public String getDescription() {
-        // TODO: Return a readable summary, e.g. "Heal for 20 HP".
-        return "TODO";
+        return "Heal for " + healAmount + " HP";
     }
 }
